@@ -36,3 +36,6 @@ quickshell -c "$GEN" ipc call youtubeSearch toggle
 ## License
 
 This project is provided as-is for personal and customization use within Ambxshell setups.
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/7ab21fca-7055-452f-b109-b9780289fc01" />
+

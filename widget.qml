@@ -20,10 +20,6 @@ PanelWindow {
         { id: "brave",    label: "Brave" },
         { id: "chromium", label: "Chromium" }
     ]
-    readonly property color accentColor: Styling.colors?.primary ?? "#ff5a5f"
-    readonly property color panelColor: Styling.colors?.surfaceContainer ?? "#1d1f24"
-    readonly property color panelOutline: Styling.colors?.outline ?? "#4d5363"
-    readonly property color mutedText: Styling.colors?.onSurfaceVariant ?? "#b9c0d0"
 
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "ambxst:youtube-search"
@@ -65,30 +61,13 @@ PanelWindow {
         variant: "popup"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 92
-        implicitWidth: 620
-        implicitHeight: 150
-        radius: Styling.radius(18)
+        anchors.topMargin: 100
+        implicitWidth: 560
+        implicitHeight: 110
+        radius: Styling.radius(14)
         enableShadow: true
 
-        Rectangle {
-            anchors.fill: parent
-            radius: parent.radius
-            color: "transparent"
-            border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.08)
-        }
-
-        Rectangle {
-            width: parent.width
-            height: 42
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            radius: parent.radius
-            color: Qt.rgba(255, 255, 255, 0.03)
-        }
-
+        // popup ඇතුළේ click → close නොවෙන්න
         MouseArea {
             anchors.fill: parent
             onClicked: {}
@@ -96,18 +75,18 @@ PanelWindow {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 14
-            spacing: 10
+            anchors.margins: 12
+            spacing: 8
 
+            // Browser chips
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 8
+                spacing: 6
 
                 Text {
-                    text: "Browser"
-                    color: mutedText
+                    text: "Browser:"
+                    color: Styling.colors?.onSurface ?? "#ccc"
                     font.pixelSize: 12
-                    font.weight: Font.DemiBold
                     Layout.alignment: Qt.AlignVCenter
                 }
 
@@ -116,24 +95,23 @@ PanelWindow {
 
                     delegate: Rectangle {
                         required property var modelData
-                        implicitWidth: chipText.width + 22
-                        implicitHeight: 28
-                        radius: 9
+                        implicitWidth: chipText.width + 16
+                        implicitHeight: 26
+                        radius: 8
                         color: root.selectedBrowser === modelData.id
-                               ? (root.accentColor)
-                               : Qt.rgba(1, 1, 1, 0.04)
-                        border.width: root.selectedBrowser === modelData.id ? 0 : 1
+                               ? (Styling.colors?.primary ?? "#ff6b6b")
+                               : (Styling.colors?.surfaceContainer ?? "#333")
+                        border.width: 1
                         border.color: root.selectedBrowser === modelData.id
                                       ? "transparent"
-                                      : root.panelOutline
+                                      : (Styling.colors?.outline ?? "#555")
 
                         Text {
                             id: chipText
                             anchors.centerIn: parent
                             text: modelData.label
-                            color: root.selectedBrowser === modelData.id ? "#ffffff" : "#e8ebf2"
-                            font.pixelSize: 11
-                            font.weight: Font.DemiBold
+                            font.pixelSize: 12
+                            color: root.selectedBrowser === modelData.id ? "#fff" : "#ddd"
                         }
 
                         MouseArea {
@@ -150,54 +128,37 @@ PanelWindow {
                 Item { Layout.fillWidth: true }
             }
 
-            Rectangle {
+            // Search row
+            RowLayout {
                 Layout.fillWidth: true
-                height: 62
-                radius: 16
-                color: Qt.rgba(0, 0, 0, 0.16)
-                border.width: 1
-                border.color: Qt.rgba(255, 255, 255, 0.06)
+                Layout.fillHeight: true
+                spacing: 8
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    spacing: 10
+                Text {
+                    text: "▶"
+                    color: "#FF0000"
+                    font.pixelSize: 18
+                    font.bold: true
+                    Layout.alignment: Qt.AlignVCenter
+                }
 
-                    Rectangle {
-                        width: 28
-                        height: 28
-                        radius: 10
-                        color: Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.15)
-                        border.width: 1
-                        border.color: Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.35)
+                SearchInput {
+                    id: searchInput
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    placeholderText: "YouTube හි සොයන්න..."
+                    clearOnEscape: true
 
-                        Text {
-                            anchors.centerIn: parent
-                            text: "▶"
-                            color: root.accentColor
-                            font.pixelSize: 13
-                            font.bold: true
-                        }
+                    onAccepted: {
+                        const query = text.trim()
+                        if (query.length > 0)
+                            root.openSearch(query)
+                        clear()
+                        GlobalStates.youtubeSearchVisible = false
                     }
 
-                    SearchInput {
-                        id: searchInput
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        placeholderText: "Search YouTube..."
-                        clearOnEscape: true
-
-                        onAccepted: {
-                            const query = text.trim()
-                            if (query.length > 0)
-                                root.openSearch(query)
-                            clear()
-                            GlobalStates.youtubeSearchVisible = false
-                        }
-
-                        onEscapePressed: {
-                            GlobalStates.youtubeSearchVisible = false
-                        }
+                    onEscapePressed: {
+                        GlobalStates.youtubeSearchVisible = false
                     }
                 }
             }

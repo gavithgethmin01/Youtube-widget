@@ -18,7 +18,7 @@ PanelWindow {
         { id: "default",  label: "Default" },
         { id: "firefox",  label: "Firefox" },
         { id: "brave",    label: "Brave" },
-        { id: "chromium", label: "Chromium" }
+        { id: "vivaldi", label: "vivaldi" }
     ]
 
     WlrLayershell.layer: WlrLayer.Overlay
